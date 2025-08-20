@@ -2,35 +2,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todoapp/data/fairstore.dart';
 
 abstract class AuthenticationDatasource {
-  Future<void> register(String email, String Password, String passwordConfirm);
-  Future<void> login(String email, String Password);
+  Future<void> register(String email, String password, String PasswordConfirm);
+  Future<void> login(String email, String password);
 }
 
 class AuthenticationRemote extends AuthenticationDatasource {
   @override
-  Future<void> login(String email, String Password) async {
+  Future<void> login(String email, String password) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email.trim(),
-      password: Password.trim(),
+      password: password.trim(),
     );
   }
 
   @override
   Future<void> register(
     String email,
-    String Password,
-    String passwordConfirm,
+    String password,
+    String PasswordConfirm,
   ) async {
-    if (Password != passwordConfirm) {
-      throw Exception('Passwords do not match');
+    if (PasswordConfirm == password) {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          )
+          .then((value) {
+            Firestore_Datasource().CreateUser(email);
+          });
     }
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-          email: email.trim(),
-          password: Password.trim(),
-        )
-        .then((value) {
-          Fairstore_Datasource().CreateUser(email);
-        });
   }
 }

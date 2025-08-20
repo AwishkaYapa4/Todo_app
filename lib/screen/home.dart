@@ -14,9 +14,9 @@ class Home_Screen extends StatefulWidget {
   State<Home_Screen> createState() => _Home_ScreenState();
 }
 
-class _Home_ScreenState extends State<Home_Screen> {
-  bool show = true;
+bool show = true;
 
+class _Home_ScreenState extends State<Home_Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,9 +25,9 @@ class _Home_ScreenState extends State<Home_Screen> {
         visible: show,
         child: FloatingActionButton(
           onPressed: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (context) => Add_creen()));
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => Add_creen(),
+            ));
           },
           backgroundColor: custom_green,
           child: Icon(Icons.add, size: 30),
@@ -48,17 +48,15 @@ class _Home_ScreenState extends State<Home_Screen> {
             }
             return true;
           },
-
           child: Column(
             children: [
               Stream_note(false),
               Text(
                 'isDone',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade500,
-                  fontWeight: FontWeight.bold,
-                ),
+                    fontSize: 16,
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.bold),
               ),
               Stream_note(true),
             ],

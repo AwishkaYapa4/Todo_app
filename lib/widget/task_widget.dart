@@ -1,22 +1,22 @@
 import 'package:todoapp/const/color.dart';
 import 'package:flutter/material.dart';
+import 'package:todoapp/data/fairstore.dart';
 import 'package:todoapp/screen/edit_screen.dart';
 
 import 'package:todoapp/model/notes_model.dart';
 
-class Task_widget extends StatefulWidget {
-  final Note _note;
-  const Task_widget(this._note, {super.key});
+class Task_Widget extends StatefulWidget {
+  Note _note;
+  Task_Widget(this._note, {super.key});
 
   @override
-  State<Task_widget> createState() => _Task_widgetState();
+  State<Task_Widget> createState() => _Task_WidgetState();
 }
 
-bool isDone = false;
-
-class _Task_widgetState extends State<Task_widget> {
+class _Task_WidgetState extends State<Task_Widget> {
   @override
   Widget build(BuildContext context) {
+    bool isDone = widget._note.isDon;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Container(
@@ -34,129 +34,137 @@ class _Task_widgetState extends State<Task_widget> {
             ),
           ],
         ),
-        child: Row(
-          children: [
-            imagee(),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget._note.title,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Checkbox(
-                        value: isDone,
-                        onChanged: (value) {
-                          setState(() {
-                            isDone = !isDone;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 1),
-                  Text(
-                    widget._note.subtitle,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey.shade400,
-                    ),
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              // image
+              imageee(),
+              SizedBox(width: 25),
+              // title and subtitle
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          width: 90,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            color: custom_green,
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            child: Row(
-                              children: [
-                                Image.asset('images/icon_time.png'),
-                                SizedBox(width: 10),
-                                Text(
-                                  widget._note.time,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        Text(
+                          widget._note.title,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => Edit_Screen(),
-                              ),
+                        Checkbox(
+                          activeColor: custom_green,
+                          value: isDone,
+                          onChanged: (value) {
+                            setState(() {
+                              isDone = !isDone;
+                            });
+                            Firestore_Datasource().isdone(
+                              widget._note.id,
+                              isDone,
                             );
                           },
-                          child: Container(
-                            width: 90,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              color: Color(0xffE2F6F1),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              child: Row(
-                                children: [
-                                  Image.asset('images/icon_edit.png'),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    'title',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    Text(
+                      widget._note.subtitle,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
+                    Spacer(),
+                    edit_time(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Container imagee() {
+  Widget edit_time() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          Container(
+            width: 90,
+            height: 28,
+            decoration: BoxDecoration(
+              color: custom_green,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                children: [
+                  Image.asset('images/icon_time.png'),
+                  SizedBox(width: 10),
+                  Text(
+                    widget._note.time,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 20),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => Edit_Screen(widget._note),
+                ),
+              );
+            },
+            child: Container(
+              width: 90,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Color(0xffE2F6F1),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: Row(
+                  children: [
+                    Image.asset('images/icon_edit.png'),
+                    SizedBox(width: 10),
+                    Text(
+                      'edit',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget imageee() {
     return Container(
       height: 130,
       width: 100,
@@ -166,7 +174,6 @@ class _Task_widgetState extends State<Task_widget> {
           image: AssetImage('images/${widget._note.image}.png'),
           fit: BoxFit.cover,
         ),
-        borderRadius: BorderRadius.circular(10),
       ),
     );
   }
